@@ -825,10 +825,11 @@ function filterAdminGrid() {
 async function deleteImg(id) {
   if (!confirm('Remover esta foto?')) return;
   try {
-    await fetch('/api/image/' + id, { method: 'DELETE' });
+    const res = await fetch('/api/image/' + id, { method: 'DELETE' });
+    if (!res.ok) throw new Error((await res.json()).error || 'Erro ao remover');
     toast('Foto removida.', 'success');
     renderAdminGrid();
-  } catch { toast('Erro ao remover.', 'error'); }
+  } catch (e) { toast(e.message || 'Erro ao remover.', 'error'); }
 }
 
 function copyUrl(id) {

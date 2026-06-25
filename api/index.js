@@ -121,12 +121,12 @@ router.post('/upload', upload.array('images', 50), async (req, res) => {
 });
 
 router.delete('/image/:id', async (req, res) => {
-  if (!supabase || !imagekit) return res.status(500).json({ error: 'Serviços não configurados' });
+  if (!supabase) return res.status(500).json({ error: 'Banco não configurado' });
   try {
     const { data: img, error: findErr } = await supabase.from('images').select('*').eq('id', req.params.id).single();
     if (findErr || !img) return res.status(404).json({ error: 'Imagem não encontrada' });
 
-    await imagekit.deleteFile(img.imagekit_file_id);
+    try { if (imagekit) await imagekit.deleteFile(img.imagekit_file_id); } catch {}
 
     const { error: delErr } = await supabase.from('images').delete().eq('id', req.params.id);
     if (delErr) throw delErr;

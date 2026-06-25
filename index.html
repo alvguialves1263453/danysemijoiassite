@@ -592,8 +592,15 @@ ul{list-style:none}
 
 <script>
 const API = '/api/images';
-let CATEGORIES = [{ id: 'todos', label: 'Todas' }];
-let CATEGORY_LABELS = {};
+let CATEGORIES = [
+  { id: 'todos', label: 'Todas' },
+  { id: 'corrente', label: 'Corrente' },
+  { id: 'colar', label: 'Colar' },
+  { id: 'pulseira', label: 'Pulseira' },
+  { id: 'anel', label: 'Anel' },
+  { id: 'brinco', label: 'Brinco' },
+];
+let CATEGORY_LABELS = { corrente: 'Corrente', colar: 'Colar', pulseira: 'Pulseira', anel: 'Anel', brinco: 'Brinco' };
 const COLLECTION_IMAGES = {
   corrente: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=600&q=80',
   colar: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=600&q=80',
@@ -662,10 +669,12 @@ document.querySelectorAll('.reveal').forEach(s => revealObserver.observe(s));
 async function loadCategories() {
   try {
     const res = await fetch('/api/categories');
-    const data = await res.json();
-    CATEGORIES = [{ id: 'todos', label: 'Todas' }, ...data.map(c => ({ id: c.id, label: c.label }))];
-    CATEGORY_LABELS = {};
-    data.forEach(c => { CATEGORY_LABELS[c.id] = c.label; });
+    if (res.ok) {
+      const data = await res.json();
+      CATEGORIES = [{ id: 'todos', label: 'Todas' }, ...data.map(c => ({ id: c.id, label: c.label }))];
+      CATEGORY_LABELS = {};
+      data.forEach(c => { CATEGORY_LABELS[c.id] = c.label; });
+    }
   } catch {}
 }
 

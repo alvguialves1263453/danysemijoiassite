@@ -922,15 +922,24 @@ function copyUrl(id) {
 }
 
 // ===== CATEGORIES =====
-let categories = [];
+const FALLBACK_CATEGORIES = [
+  { id: 'corrente', label: 'Corrente' },
+  { id: 'colar', label: 'Colar' },
+  { id: 'pulseira', label: 'Pulseira' },
+  { id: 'anel', label: 'Anel' },
+  { id: 'brinco', label: 'Brinco' },
+];
+let categories = [...FALLBACK_CATEGORIES];
 
 async function loadCategories() {
   try {
     const res = await fetch('/api/categories');
-    categories = await res.json();
-    renderCategoryOptions();
-    renderCategoryList();
+    if (res.ok) {
+      categories = await res.json();
+    }
   } catch {}
+  renderCategoryOptions();
+  renderCategoryList();
 }
 
 function renderCategoryOptions() {

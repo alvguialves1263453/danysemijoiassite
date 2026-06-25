@@ -809,12 +809,12 @@ async function renderAdminGrid() {
 
 function filterAdminGrid() {
   const q = document.getElementById('manageSearch').value.toLowerCase();
-  const filtered = q ? manageImages.filter(i => (i.originalName || '').toLowerCase().includes(q)) : manageImages;
+  const filtered = q ? manageImages.filter(i => (i.original_name || '').toLowerCase().includes(q)) : manageImages;
   if (filtered.length === 0) { adminGrid.innerHTML = ''; emptyMsg.style.display = 'block'; return; }
   emptyMsg.style.display = 'none';
   adminGrid.innerHTML = filtered.map(img =>
     `<div class="admin-item">
-      <img src="/uploads/${img.category}/${img.filename}" alt="" loading="lazy" />
+      <img src="${img.imagekit_url}" alt="" loading="lazy" />
       <span class="admin-tag">${CATEGORY_LABELS[img.category] || img.category}</span>
       <button class="admin-copy" onclick="copyUrl('${img.id}')" title="Copiar link">&#128203;</button>
       <button class="admin-del" onclick="deleteImg('${img.id}')">&times;</button>
@@ -834,7 +834,7 @@ async function deleteImg(id) {
 function copyUrl(id) {
   const img = allImagesCache.find(i => i.id === id);
   if (img) {
-    const url = location.origin + '/uploads/' + img.category + '/' + img.filename;
+    const url = img.imagekit_url;
     navigator.clipboard.writeText(url).then(() => toast('Link copiado!', 'success'))
       .catch(() => { prompt('Copie o link:', url); });
   }

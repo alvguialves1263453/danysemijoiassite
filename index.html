@@ -682,12 +682,12 @@ async function loadImages() {
 
 function setHeroImage() {
   const hero = document.getElementById('heroBg');
-  const img = allImages.find(i => i.category === 'conjuntos') || allImages[0];
+  const img = allImages[0];
   if (img) {
     hero.classList.remove('default');
     hero.style.background = 'none';
     hero.style.opacity = '0.4';
-    hero.innerHTML = `<img src="/uploads/${img.category}/${img.filename}" alt="" class="hero-bg" />`;
+    hero.innerHTML = `<img src="${img.imagekit_url}" alt="" class="hero-bg" />`;
   }
 }
 
@@ -725,7 +725,7 @@ function renderGallery() {
     const tag = CATEGORY_LABELS[img.category] || img.category;
     const isFav = favorites.includes(img.id);
     return `<div class="gallery-card cursor-hover" data-id="${img.id}">
-      <img src="/uploads/${img.category}/${img.filename}" alt="${img.originalName || 'Semijoia'}" loading="lazy" />
+      <img src="${img.imagekit_url}" alt="${img.original_name || 'Semijoia'}" loading="lazy" />
       <div class="card-actions">
         <button class="card-action-btn ${isFav ? 'favorited' : ''}" onclick="event.stopPropagation();toggleFav('${img.id}')">
           ${isFav ? '&#9829;' : '&#9825;'}
@@ -733,7 +733,7 @@ function renderGallery() {
       </div>
       <div class="card-overlay" onclick="openLightbox('${img.id}')">
         <span class="card-tag">${tag}</span>
-        <span class="card-title">${img.originalName || 'Semijoia'}</span>
+        <span class="card-title">${img.original_name || 'Semijoia'}</span>
       </div>
     </div>`;
   }).join('');
@@ -799,15 +799,15 @@ function openLightbox(id) {
 
 function showLightbox() {
   const img = lightboxImages[lightboxIndex];
-  lightboxImg.src = `/uploads/${img.category}/${img.filename}`;
-  lightboxImg.alt = img.originalName || '';
+  lightboxImg.src = img.imagekit_url;
+  lightboxImg.alt = img.original_name || '';
   lightboxImg.classList.remove('zoomed');
   lightboxDownload.href = `/api/download/${img.id}`;
-  lightboxDownload.download = img.originalName || 'semijoia';
+  lightboxDownload.download = img.original_name || 'semijoia';
 
   lightboxCounter.textContent = `${lightboxIndex + 1} / ${lightboxImages.length}`;
   const tag = CATEGORY_LABELS[img.category] || img.category;
-  lightboxCaption.innerHTML = `<span class="tag">${tag}</span>${img.originalName || 'Semijoia'}`;
+  lightboxCaption.innerHTML = `<span class="tag">${tag}</span>${img.original_name || 'Semijoia'}`;
 }
 
 function closeLightbox() {

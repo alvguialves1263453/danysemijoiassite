@@ -46,7 +46,11 @@ a{text-decoration:none;color:inherit}
 .tab-content{display:none}.tab-content.active{display:block}
 
 /* ===== UPLOAD DASHBOARD ===== */
-.upload-dashboard{background:var(--white);border:1px solid rgba(0,0,0,0.04)}
+.upload-dashboard{background:var(--white);border:1px solid rgba(0,0,0,0.04);overflow:hidden}
+.upload-header{padding:20px 24px;border-bottom:1px solid #f5f0eb;display:flex;align-items:center;gap:12px}
+.upload-header-icon{width:36px;height:36px;border-radius:50%;background:rgba(220,119,127,0.1);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.upload-header h2{font-family:var(--font-display);font-size:1.05rem;font-weight:500;color:var(--black)}
+.upload-header p{font-size:0.68rem;color:var(--text-light);margin-top:2px}
 
 /* Stats Bar */
 .stats-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:1px;background:#f0f0f0}
@@ -57,18 +61,17 @@ a{text-decoration:none;color:inherit}
 .stat-item .stat-value.rose{color:var(--rose)}
 
 /* Drop Zone */
-.drop-zone{position:relative;margin:24px;padding:48px 24px;border:1.5px dashed #ddd;text-align:center;cursor:pointer;transition:all var(--transition);background:var(--cream);border-radius:2px}
+.drop-zone{position:relative;padding:40px 24px;border:1.5px dashed #ddd;text-align:center;cursor:pointer;transition:all var(--transition);background:linear-gradient(135deg,#fdfcf9 0%,#faf6f1 100%);border-radius:8px}
 .drop-zone:hover,.drop-zone.dragover{border-color:var(--rose);background:rgba(220,119,127,0.03)}
 .drop-zone.dragover{transform:scale(1.005)}
-.drop-zone-icon{width:48px;height:48px;margin:0 auto 12px;border-radius:50%;background:var(--rose-light);display:flex;align-items:center;justify-content:center;font-size:1.3rem;transition:transform 0.3s}
+.drop-zone-icon{width:52px;height:52px;margin:0 auto 12px;border-radius:50%;background:rgba(220,119,127,0.12);display:flex;align-items:center;justify-content:center;font-size:1.4rem;transition:transform 0.3s}
 .drop-zone:hover .drop-zone-icon{transform:scale(1.08)}
 .drop-zone p{color:var(--text-light);font-size:0.9rem}
 .drop-zone p strong{color:var(--text);font-weight:500}
 .drop-zone .hint{font-size:0.68rem;color:var(--text-muted);margin-top:6px}
 .drop-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
 
-/* Category & Options */
-.upload-options{display:flex;gap:16px;padding:0 24px 20px;flex-wrap:wrap;align-items:end}
+/* Options */
 .option-group{flex:1;min-width:180px}
 .option-group label{display:block;font-size:0.6rem;font-weight:500;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-light);margin-bottom:4px}
 .option-group select,.option-group input{width:100%;padding:10px 14px;border:1px solid #e0e0e0;border-radius:2px;font-family:var(--font-body);font-size:0.82rem;background:var(--white);transition:border var(--transition)}
@@ -206,9 +209,8 @@ a{text-decoration:none;color:inherit}
   .stat-item{padding:14px 8px}
   .stat-item .stat-value{font-size:1rem}
   .stat-item .stat-label{font-size:0.5rem}
-  .drop-zone{margin:16px;padding:32px 16px}
-  .upload-options{padding:0 16px 16px;gap:10px}
-  .option-group{min-width:140px}
+  .upload-header{padding:16px 16px}
+  .drop-zone{padding:32px 16px}
   .preview-section{padding:0 16px 16px}
   .preview-grid{grid-template-columns:repeat(auto-fill,minmax(70px,1fr));max-height:180px}
   .progress-section{padding:0 16px 20px}
@@ -218,7 +220,7 @@ a{text-decoration:none;color:inherit}
   .completion-screen{padding:24px 16px}
   .completion-stats{grid-template-columns:repeat(2,1fr)}
   .tabs-bar{gap:2px;padding:3px}
-  .tab-btn{padding:8px 14px;font-size:0.55rem;letter-spacing:1px}
+  .tab-btn{padding:8px 10px;font-size:0.5rem;letter-spacing:1px}
   .admin-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
   .admin-item .admin-actions{opacity:1;flex-direction:column;gap:3px;padding:0 10px 10px}
   .admin-item .admin-actions button{padding:6px 0;font-size:0.5rem}
@@ -233,11 +235,15 @@ a{text-decoration:none;color:inherit}
   .stats-bar{grid-template-columns:repeat(2,1fr)}
   .drop-zone-icon{width:40px;height:40px;font-size:1.1rem}
   .drop-zone p{font-size:0.8rem}
+  .upload-header{padding:14px 14px}
+  .upload-header-icon{width:30px;height:30px;font-size:0.85rem}
+  .upload-header h2{font-size:0.9rem}
+  .upload-header p{font-size:0.6rem}
   .preview-grid{grid-template-columns:repeat(auto-fill,minmax(60px,1fr))}
-  .upload-options{flex-direction:column}
   .option-group{min-width:100%}
   .completion-stats{grid-template-columns:1fr 1fr;gap:8px}
   .admin-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
+  .tab-btn{padding:6px 8px;font-size:0.45rem;letter-spacing:0.5px}
 }
 @media(hover:none){
   .admin-item .admin-actions{opacity:1}
@@ -276,11 +282,19 @@ a{text-decoration:none;color:inherit}
     <div class="tabs-bar">
       <button class="tab-btn active" data-tab="upload">Upload</button>
       <button class="tab-btn" data-tab="manage">Gerenciar</button>
+      <button class="tab-btn" data-tab="categories">Categorias</button>
     </div>
 
     <!-- ===== UPLOAD TAB ===== -->
     <div class="tab-content active" id="uploadTab">
       <div class="upload-dashboard">
+        <div class="upload-header">
+          <div class="upload-header-icon">&#128247;</div>
+          <div>
+            <h2>Upload de Fotos</h2>
+            <p>Adicione imagens e defina a categoria antes de enviar</p>
+          </div>
+        </div>
         <!-- Stats Bar -->
         <div class="stats-bar" id="statsBar">
           <div class="stat-item"><div class="stat-value" id="statSelected">0</div><div class="stat-label">Selecionadas</div></div>
@@ -292,22 +306,26 @@ a{text-decoration:none;color:inherit}
         </div>
 
         <!-- Drop Zone -->
-        <div class="drop-zone" id="dropZone">
-          <div class="drop-zone-icon">&#128247;</div>
-          <p><strong>Clique aqui</strong> ou arraste suas fotos</p>
-          <p class="hint">JPG, PNG, WEBP — até 500MB cada</p>
-          <input type="file" id="fileInput" accept="image/*" multiple />
+        <div style="padding:12px 24px 0">
+          <div class="drop-zone" id="dropZone" style="margin:0;padding:40px 24px;border-radius:8px;background:linear-gradient(135deg,#fdfcf9 0%,#faf6f1 100%)">
+            <div class="drop-zone-icon" style="width:52px;height:52px;background:rgba(220,119,127,0.12);font-size:1.4rem;margin-bottom:14px">&#128247;</div>
+            <p><strong style="font-weight:500">Clique aqui</strong> ou arraste suas fotos</p>
+            <p class="hint" style="font-size:0.72rem;color:var(--text-light);margin-top:6px">JPG, PNG, WEBP — até 500MB cada</p>
+            <input type="file" id="fileInput" accept="image/*" multiple />
+          </div>
         </div>
 
         <!-- Options -->
-        <div class="upload-options">
-          <div class="option-group">
-            <label>Categoria</label>
-            <select id="categorySelect"></select>
-          </div>
-          <div class="option-group checkbox">
-            <input type="checkbox" id="compressCheck" checked />
-            <label for="compressCheck">Comprimir imagens (máx 1200px)</label>
+        <div style="padding:16px 24px 8px">
+          <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:end">
+            <div class="option-group" style="flex:1;min-width:180px">
+              <label>Categoria</label>
+              <select id="categorySelect"></select>
+            </div>
+            <div class="option-group checkbox" style="flex:1;min-width:160px">
+              <input type="checkbox" id="compressCheck" checked />
+              <label for="compressCheck">Comprimir imagens (máx 1200px)</label>
+            </div>
           </div>
         </div>
 
@@ -380,21 +398,35 @@ a{text-decoration:none;color:inherit}
           <p>Nenhuma foto encontrada.</p>
         </div>
         <div class="admin-grid" id="adminGrid"></div>
+      </div>
+    </div>
 
-        <div style="margin-top:32px;padding-top:24px;border-top:1px solid #eee">
-          <h3 style="font-family:var(--font-display);font-size:0.95rem;font-weight:500;margin-bottom:8px">Gerenciar Categorias</h3>
-          <p style="font-size:0.75rem;color:var(--text-light);margin-bottom:12px">Ao remover uma categoria, as fotos dela são movidas para outra automaticamente.</p>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px" id="categoryList"></div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:end">
-            <div class="option-group" style="flex:1;min-width:120px">
-              <label>ID (slug)</label>
-              <input id="newCatId" placeholder="ex: pingente" style="padding:10px 14px;border:1px solid #e0e0e0;border-radius:2px;font-family:var(--font-body);font-size:0.82rem;width:100%" />
+    <!-- ===== CATEGORIES TAB ===== -->
+    <div class="tab-content" id="categoriesTab">
+      <div class="card" style="background:var(--white);border:1px solid rgba(0,0,0,0.04);overflow:hidden">
+        <div class="upload-header" style="border-bottom-color:#f5f0eb">
+          <div class="upload-header-icon">&#128203;</div>
+          <div>
+            <h2 style="font-family:var(--font-display);font-size:1.05rem;font-weight:500">Gerenciar Categorias</h2>
+            <p style="font-size:0.68rem;color:var(--text-light);margin-top:2px">Adicione ou remova categorias para organizar as fotos</p>
+          </div>
+        </div>
+        <div style="padding:24px">
+          <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:24px" id="categoryList"></div>
+
+          <div style="background:var(--cream);border:1px solid #f0ece7;border-radius:6px;padding:20px">
+            <h4 style="font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-light);margin-bottom:12px">Nova Categoria</h4>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:end">
+              <div class="option-group" style="flex:1;min-width:140px">
+                <label>ID (slug)</label>
+                <input id="newCatId" placeholder="ex: pingente" style="padding:10px 14px;border:1px solid #e0e0e0;border-radius:4px;font-family:var(--font-body);font-size:0.82rem;width:100%" />
+              </div>
+              <div class="option-group" style="flex:1;min-width:140px">
+                <label>Nome</label>
+                <input id="newCatLabel" placeholder="ex: Pingente" style="padding:10px 14px;border:1px solid #e0e0e0;border-radius:4px;font-family:var(--font-body);font-size:0.82rem;width:100%" />
+              </div>
+              <button class="btn-primary rose-bg" style="padding:10px 20px;font-size:0.6rem;min-width:auto;flex-shrink:0;border-radius:4px" onclick="addCategory()">Adicionar</button>
             </div>
-            <div class="option-group" style="flex:1;min-width:120px">
-              <label>Nome</label>
-              <input id="newCatLabel" placeholder="ex: Pingente" style="padding:10px 14px;border:1px solid #e0e0e0;border-radius:2px;font-family:var(--font-body);font-size:0.82rem;width:100%" />
-            </div>
-            <button class="btn-primary rose-bg" style="padding:10px 20px;font-size:0.6rem;min-width:auto;flex-shrink:0" onclick="addCategory()">Adicionar</button>
           </div>
         </div>
       </div>
@@ -410,6 +442,7 @@ const STATE = { files: [], completed: 0, failed: 0, total: 0, uploadedBytes: 0, 
 const CATEGORY_LABELS = { corrente: 'Corrente', colar: 'Colar', pulseira: 'Pulseira', anel: 'Anel', brinco: 'Brinco' };
 let isAdmin = false;
 let allImagesCache = [];
+let catLabels = {};
 
 // ===== HELPERS =====
 function fmtSize(bytes) { if (!bytes) return '0 B'; const u = ['B','KB','MB','GB']; let i = 0; let s = bytes; while (s >= 1024 && i < u.length-1) { s /= 1024; i++; } return s.toFixed(i > 0 ? 1 : 0) + ' ' + u[i]; }
@@ -459,12 +492,14 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.classList.add('active');
     document.getElementById(btn.dataset.tab + 'Tab').classList.add('active');
     if (btn.dataset.tab === 'manage') renderAdminGrid();
+    if (btn.dataset.tab === 'categories') { loadCategories(); renderAdminGrid(); }
   });
 });
 function showTab(name) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
   document.querySelectorAll('.tab-content').forEach(c => c.classList.toggle('active', c.id === name + 'Tab'));
   if (name === 'manage') renderAdminGrid();
+  if (name === 'categories') { loadCategories(); renderAdminGrid(); }
 }
 
 // ===== FILE SELECTION =====
@@ -842,10 +877,11 @@ function filterAdminGrid() {
   emptyMsg.style.display = 'none';
   adminGrid.innerHTML = filtered.map(img => {
     const date = new Date(img.uploaded_at).toLocaleDateString('pt-BR');
+    const label = catLabels[img.category] || CATEGORY_LABELS[img.category] || img.category;
     return `<div class="admin-item" data-id="${img.id}">
       <div class="admin-img-wrap">
         <img src="${img.imagekit_url}" alt="" loading="lazy" />
-        <span class="admin-tag">${CATEGORY_LABELS[img.category] || img.category}</span>
+        <span class="admin-tag">${label}</span>
       </div>
       <div class="admin-body">
         <div class="admin-name editable" onclick="editName(this,'${img.id}')" title="Clique para editar">${img.original_name || 'Sem nome'}</div>
@@ -938,6 +974,8 @@ async function loadCategories() {
       categories = await res.json();
     }
   } catch {}
+  catLabels = {};
+  categories.forEach(c => { catLabels[c.id] = c.label; });
   renderCategoryOptions();
   renderCategoryList();
 }
@@ -956,12 +994,15 @@ function renderCategoryOptions() {
 function renderCategoryList() {
   const list = document.getElementById('categoryList');
   if (!list) return;
+  const counts = {};
+  (allImagesCache || []).forEach(img => { counts[img.category] = (counts[img.category] || 0) + 1; });
   list.innerHTML = categories.map(c =>
-    `<span style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:var(--cream);border:1px solid #eee;border-radius:50px;font-size:0.72rem">
-      ${c.label}
-      <button onclick="deleteCategory('${c.id}')" style="background:none;border:none;color:var(--text-light);cursor:pointer;font-size:0.85rem;line-height:1;padding:0">&times;</button>
+    `<span style="display:inline-flex;align-items:center;gap:8px;padding:8px 16px 8px 18px;background:var(--cream);border:1px solid #ede9e4;border-radius:50px;font-size:0.78rem;transition:all 0.2s;box-shadow:var(--shadow-sm)">
+      <span style="color:var(--text)">${c.label}</span>
+      <span style="font-size:0.6rem;color:var(--text-light);background:var(--white);padding:1px 8px;border-radius:50px;border:1px solid #eee">${counts[c.id] || 0}</span>
+      <button onclick="deleteCategory('${c.id}')" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:0.95rem;line-height:1;padding:0 2px;transition:color 0.2s" title="Remover categoria">&times;</button>
     </span>`
-  ).join('');
+  ).join('') || '<span style="font-size:0.82rem;color:var(--text-light)">Nenhuma categoria ainda.</span>';
 }
 
 async function addCategory() {

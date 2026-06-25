@@ -221,8 +221,6 @@ a{text-decoration:none;color:inherit}
   .file-list-section{padding:0 16px 20px}
   .upload-actions{padding:0 16px 20px;flex-direction:column}
   .btn-primary,.btn-secondary{width:100%}
-  .completion-screen{padding:24px 16px}
-  .completion-stats{grid-template-columns:repeat(2,1fr)}
   .tabs-bar{gap:2px;padding:3px}
   .tab-btn{padding:8px 10px;font-size:0.5rem;letter-spacing:1px}
   .admin-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
@@ -581,7 +579,6 @@ async function startUpload() {
   document.getElementById('clearBtn').style.display = 'none';
   document.getElementById('progressSection').classList.add('active');
   document.getElementById('fileListSection').classList.add('active');
-  document.getElementById('completionScreen').classList.remove('active');
   document.getElementById('progressTitle').textContent = 'Upload em andamento...';
   document.getElementById('progressPct').textContent = '0%';
   document.getElementById('progressFill').style.width = '0%';
@@ -815,7 +812,6 @@ function resetUpload() {
   document.getElementById('previewSection').style.display = 'none';
   document.getElementById('progressSection').classList.remove('active');
   document.getElementById('fileListSection').classList.remove('active');
-  document.getElementById('completionScreen').classList.remove('active');
   document.getElementById('startUploadBtn').style.display = 'block';
   document.getElementById('startUploadBtn').disabled = true;
   document.getElementById('startUploadBtn').textContent = 'Iniciar Upload';
@@ -829,7 +825,6 @@ function resetUpload() {
   document.getElementById('statSpeed').textContent = '—';
   document.getElementById('statETA').textContent = '—';
   document.getElementById('progressMetrics').innerHTML = '';
-  document.getElementById('completionStats').innerHTML = '';
 }
 
 // ===== IMAGE COMPRESSION =====

@@ -303,13 +303,7 @@ a{text-decoration:none;color:inherit}
         <div class="upload-options">
           <div class="option-group">
             <label>Categoria</label>
-            <select id="categorySelect">
-              <option value="corrente">Corrente</option>
-              <option value="colar">Colar</option>
-              <option value="pulseira">Pulseira</option>
-              <option value="anel">Anel</option>
-              <option value="brinco">Brinco</option>
-            </select>
+            <select id="categorySelect"></select>
           </div>
           <div class="option-group checkbox">
             <input type="checkbox" id="compressCheck" checked />
@@ -379,11 +373,6 @@ a{text-decoration:none;color:inherit}
           <input class="manage-search" id="manageSearch" placeholder="Buscar por nome..." oninput="filterAdminGrid()" style="flex:1;min-width:160px" />
           <select id="manageCategoryFilter" onchange="filterAdminGrid()" style="padding:10px 14px;border:1px solid #e0e0e0;border-radius:2px;font-family:var(--font-body);font-size:0.82rem;background:var(--white);min-width:140px">
             <option value="todos">Todas categorias</option>
-            <option value="corrente">Corrente</option>
-            <option value="colar">Colar</option>
-            <option value="pulseira">Pulseira</option>
-            <option value="anel">Anel</option>
-            <option value="brinco">Brinco</option>
           </select>
         </div>
         <div class="empty-msg" id="emptyMsg" style="display:none">
@@ -391,6 +380,23 @@ a{text-decoration:none;color:inherit}
           <p>Nenhuma foto encontrada.</p>
         </div>
         <div class="admin-grid" id="adminGrid"></div>
+
+        <div style="margin-top:32px;padding-top:24px;border-top:1px solid #eee">
+          <h3 style="font-family:var(--font-display);font-size:0.95rem;font-weight:500;margin-bottom:8px">Gerenciar Categorias</h3>
+          <p style="font-size:0.75rem;color:var(--text-light);margin-bottom:12px">Ao remover uma categoria, as fotos dela são movidas para outra automaticamente.</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px" id="categoryList"></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:end">
+            <div class="option-group" style="flex:1;min-width:120px">
+              <label>ID (slug)</label>
+              <input id="newCatId" placeholder="ex: pingente" style="padding:10px 14px;border:1px solid #e0e0e0;border-radius:2px;font-family:var(--font-body);font-size:0.82rem;width:100%" />
+            </div>
+            <div class="option-group" style="flex:1;min-width:120px">
+              <label>Nome</label>
+              <input id="newCatLabel" placeholder="ex: Pingente" style="padding:10px 14px;border:1px solid #e0e0e0;border-radius:2px;font-family:var(--font-body);font-size:0.82rem;width:100%" />
+            </div>
+            <button class="btn-primary rose-bg" style="padding:10px 20px;font-size:0.6rem;min-width:auto;flex-shrink:0" onclick="addCategory()">Adicionar</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -915,7 +921,70 @@ function copyUrl(id) {
   }
 }
 
-// ===== INIT =====
+// ===== CATEGORIES =====
+let categories = [];
+
+async function loadCategories() {
+  try {
+    const res = await fetch('/api/categories');
+    categories = await res.json();
+    renderCategoryOptions();
+    renderCategoryList();
+  } catch {}
+}
+
+function renderCategoryOptions() {
+  const sel = document.getElementById('categorySelect');
+  const filter = document.getElementById('manageCategoryFilter');
+  if (!sel || !filter) return;
+  sel.innerHTML = categories.map(c => `<option value="${c.id}">${c.label}</option>`).join('');
+  const curr = filter.options[filter.selectedIndex]?.value || 'todos';
+  filter.innerHTML = '<option value="todos">Todas categorias</option>' +
+    categories.map(c => `<option value="${c.id}">${c.label}</option>`).join('');
+  filter.value = curr;
+}
+
+function renderCategoryList() {
+  const list = document.getElementById('categoryList');
+  if (!list) return;
+  list.innerHTML = categories.map(c =>
+    `<span style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:var(--cream);border:1px solid #eee;border-radius:50px;font-size:0.72rem">
+      ${c.label}
+      <button onclick="deleteCategory('${c.id}')" style="background:none;border:none;color:var(--text-light);cursor:pointer;font-size:0.85rem;line-height:1;padding:0">&times;</button>
+    </span>`
+  ).join('');
+}
+
+async function addCategory() {
+  const id = document.getElementById('newCatId').value.trim().toLowerCase().replace(/\s+/g, '_');
+  const label = document.getElementById('newCatLabel').value.trim();
+  if (!id || !label) { toast('Preencha ID e Nome.', 'error'); return; }
+  try {
+    const res = await fetch('/api/categories', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, label }),
+    });
+    if (!res.ok) throw new Error('ID já existe ou inválido');
+    document.getElementById('newCatId').value = '';
+    document.getElementById('newCatLabel').value = '';
+    await loadCategories();
+    toast('Categoria adicionada!', 'success');
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+async function deleteCategory(id) {
+  if (!confirm(`Remover categoria "${id}"? As fotos serão movidas para outra.`)) return;
+  try {
+    const res = await fetch('/api/categories/' + id, { method: 'DELETE' });
+    if (!res.ok) throw new Error('Erro ao remover');
+    await loadCategories();
+    renderAdminGrid();
+    toast('Categoria removida.', 'success');
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+loadCategories();
 renderAdminGrid();
 </script>
 </body>

@@ -49,6 +49,46 @@ router.get('/health', (req, res) => {
   res.json({ ok: true, supabase: !!supabase, imagekit: !!imagekit });
 });
 
+router.get('/categories', async (req, res) => {
+  if (!supabase) return res.status(500).json({ error: 'Banco não configurado' });
+  try {
+    const { data, error } = await supabase.from('categories').select('*').order('id');
+    if (error) throw error;
+    res.json(data || []);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.post('/categories', async (req, res) => {
+  if (!supabase) return res.status(500).json({ error: 'Banco não configurado' });
+  try {
+    const { id, label } = req.body;
+    if (!id || !label) return res.status(400).json({ error: 'id e label são obrigatórios' });
+    const { data, error } = await supabase.from('categories').insert({ id, label }).select().single();
+    if (error) throw error;
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.delete('/categories/:id', async (req, res) => {
+  if (!supabase) return res.status(500).json({ error: 'Banco não configurado' });
+  try {
+    const { data: firstCat } = await supabase.from('categories').select('id').neq('id', req.params.id).limit(1).single();
+    const fallback = firstCat?.id || 'corrente';
+
+    await supabase.from('images').update({ category: fallback }).eq('category', req.params.id);
+
+    const { error } = await supabase.from('categories').delete().eq('id', req.params.id);
+    if (error) throw error;
+    res.json({ success: true, fallback });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 async function getAdminPassword() {
   if (!supabase) return null;
   try {

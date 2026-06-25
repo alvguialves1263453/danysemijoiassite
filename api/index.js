@@ -63,8 +63,11 @@ router.get('/categories', async (req, res) => {
 router.post('/categories', async (req, res) => {
   if (!supabase) return res.status(500).json({ error: 'Banco não configurado' });
   try {
-    const { id, label } = req.body;
-    if (!id || !label) return res.status(400).json({ error: 'id e label são obrigatórios' });
+    let { id, label } = req.body;
+    if (!label) return res.status(400).json({ error: 'label é obrigatório' });
+    if (!id) {
+      id = label.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
+    }
     const { data, error } = await supabase.from('categories').insert({ id, label }).select().single();
     if (error) throw error;
     res.json(data);

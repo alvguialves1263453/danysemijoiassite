@@ -417,15 +417,11 @@ a{text-decoration:none;color:inherit}
           <div style="background:var(--cream);border:1px solid #f0ece7;border-radius:6px;padding:20px">
             <h4 style="font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-light);margin-bottom:12px">Nova Categoria</h4>
             <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:end">
-              <div class="option-group" style="flex:1;min-width:140px">
-                <label>ID (slug)</label>
-                <input id="newCatId" placeholder="ex: pingente" style="padding:10px 14px;border:1px solid #e0e0e0;border-radius:4px;font-family:var(--font-body);font-size:0.82rem;width:100%" />
-              </div>
-              <div class="option-group" style="flex:1;min-width:140px">
+              <div class="option-group" style="flex:1;min-width:180px">
                 <label>Nome</label>
                 <input id="newCatLabel" placeholder="ex: Pingente" style="padding:10px 14px;border:1px solid #e0e0e0;border-radius:4px;font-family:var(--font-body);font-size:0.82rem;width:100%" />
               </div>
-              <button class="btn-primary rose-bg" style="padding:10px 20px;font-size:0.6rem;min-width:auto;flex-shrink:0;border-radius:4px" onclick="addCategory()">Adicionar</button>
+              <button class="btn-primary rose-bg" style="padding:10px 24px;font-size:0.6rem;min-width:auto;flex-shrink:0;border-radius:4px" onclick="addCategory()">Adicionar</button>
             </div>
           </div>
         </div>
@@ -1006,9 +1002,9 @@ function renderCategoryList() {
 }
 
 async function addCategory() {
-  const id = document.getElementById('newCatId').value.trim().toLowerCase().replace(/\s+/g, '_');
   const label = document.getElementById('newCatLabel').value.trim();
-  if (!id || !label) { toast('Preencha ID e Nome.', 'error'); return; }
+  if (!label) { toast('Digite o nome da categoria.', 'error'); return; }
+  const id = label.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
   try {
     const res = await fetch('/api/categories', {
       method: 'POST',
@@ -1016,7 +1012,6 @@ async function addCategory() {
       body: JSON.stringify({ id, label }),
     });
     if (!res.ok) throw new Error('ID já existe ou inválido');
-    document.getElementById('newCatId').value = '';
     document.getElementById('newCatLabel').value = '';
     await loadCategories();
     toast('Categoria adicionada!', 'success');

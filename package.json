@@ -1,0 +1,14 @@
+{
+  "name": "danysemijoias",
+  "version": "1.0.0",
+  "description": "Site de upload e download de imagens por categoria",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "multer": "^1.4.5-lts.1"
+  }
+}

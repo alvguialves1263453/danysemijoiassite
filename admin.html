@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dany Semijoias — Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--rose:#DC777F;--rose-dark:#9D4D46;--rose-light:#F5D0D0;--black:#0D0D0D;--black-soft:#1A1A1A;--text:#2C2C2C;--text-light:#8A8A8A;--text-muted:#B8B8B8;--white:#FFFFFF;--cream:#FDFCF9;--warm:#F9F6F0;--success:#2E7D32;--success-bg:#E8F5E9;--error:#C62828;--error-bg:#FFEBEE;--warning:#F57F17;--warning-bg:#FFF8E1;--font-display:'Playfair Display',Georgia,serif;--font-body:'Inter',-apple-system,sans-serif;--transition:0.3s cubic-bezier(0.25,0.46,0.45,0.94);--shadow-sm:0 1px 3px rgba(0,0,0,0.04);--shadow-md:0 8px 32px rgba(0,0,0,0.08);--shadow-lg:0 16px 48px rgba(0,0,0,0.12)}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);color:var(--text);background:var(--cream);-webkit-font-smoothing:antialiased;min-height:100dvh}
+img{max-width:100%;display:block}
+a{text-decoration:none;color:inherit}
+::selection{background:var(--rose);color:var(--white)}
+
+/* HEADER */
+.header{background:var(--black);color:var(--white);padding:14px 40px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.04);position:sticky;top:0;z-index:100}
+.header-brand{display:flex;align-items:center;gap:10px}
+.header-brand img{height:22px;width:auto}
+.header-badge{font-size:0.5rem;font-weight:300;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.25);border-left:1px solid rgba(255,255,255,0.08);padding-left:10px}
+.header-actions{display:flex;gap:10px;align-items:center}
+.header-back{font-size:0.65rem;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.35);transition:color var(--transition)}
+.header-back:hover{color:var(--rose)}
+.btn-logout{background:none;border:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.3);padding:7px 16px;border-radius:2px;font-size:0.6rem;font-family:var(--font-body);font-weight:400;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all var(--transition)}
+.btn-logout:hover{color:var(--rose);border-color:var(--rose)}
+
+/* MAIN */
+.main{max-width:960px;margin:0 auto;padding:32px 24px}
+
+/* LOGIN */
+.login-box{max-width:380px;margin:80px auto;text-align:center;padding:48px 40px;background:var(--white);border:1px solid rgba(0,0,0,0.04)}
+.login-box h2{font-family:var(--font-display);font-size:1.3rem;font-weight:500;color:var(--black)}
+.login-box .divider{width:36px;height:1.5px;background:var(--rose);margin:12px auto 24px}
+.login-box p{font-size:0.82rem;color:var(--text-light);margin-bottom:24px}
+.login-box input{width:100%;padding:12px 16px;border:1px solid #e0e0e0;border-radius:2px;font-family:var(--font-body);font-size:0.9rem;margin-bottom:12px;transition:border var(--transition)}
+.login-box input:focus{border-color:var(--rose);outline:none;box-shadow:0 0 0 3px rgba(220,119,127,0.08)}
+.login-error{color:var(--error);font-size:0.8rem;margin-top:8px;display:none}
+
+/* TABS */
+.tabs-bar{display:flex;gap:2px;padding:4px;background:var(--warm);margin-bottom:24px;border-radius:2px}
+.tab-btn{padding:10px 24px;font-family:var(--font-body);font-size:0.65rem;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:var(--text-light);cursor:pointer;transition:all var(--transition);border:none;background:none;border-radius:2px}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{background:var(--white);color:var(--black);box-shadow:var(--shadow-sm)}
+.tab-content{display:none}.tab-content.active{display:block}
+
+/* ===== UPLOAD DASHBOARD ===== */
+.upload-dashboard{background:var(--white);border:1px solid rgba(0,0,0,0.04)}
+
+/* Stats Bar */
+.stats-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:1px;background:#f0f0f0}
+.stat-item{padding:20px 16px;background:var(--white);text-align:center}
+.stat-item .stat-value{font-size:1.2rem;font-weight:600;color:var(--black);line-height:1.2}
+.stat-item .stat-label{font-size:0.6rem;color:var(--text-light);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+.stat-item .stat-value.success{color:var(--success)}
+.stat-item .stat-value.rose{color:var(--rose)}
+
+/* Drop Zone */
+.drop-zone{position:relative;margin:24px;padding:48px 24px;border:1.5px dashed #ddd;text-align:center;cursor:pointer;transition:all var(--transition);background:var(--cream);border-radius:2px}
+.drop-zone:hover,.drop-zone.dragover{border-color:var(--rose);background:rgba(220,119,127,0.03)}
+.drop-zone.dragover{transform:scale(1.005)}
+.drop-zone-icon{width:48px;height:48px;margin:0 auto 12px;border-radius:50%;background:var(--rose-light);display:flex;align-items:center;justify-content:center;font-size:1.3rem;transition:transform 0.3s}
+.drop-zone:hover .drop-zone-icon{transform:scale(1.08)}
+.drop-zone p{color:var(--text-light);font-size:0.9rem}
+.drop-zone p strong{color:var(--text);font-weight:500}
+.drop-zone .hint{font-size:0.68rem;color:var(--text-muted);margin-top:6px}
+.drop-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+
+/* Category & Options */
+.upload-options{display:flex;gap:16px;padding:0 24px 20px;flex-wrap:wrap;align-items:end}
+.option-group{flex:1;min-width:180px}
+.option-group label{display:block;font-size:0.6rem;font-weight:500;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-light);margin-bottom:4px}
+.option-group select,.option-group input{width:100%;padding:10px 14px;border:1px solid #e0e0e0;border-radius:2px;font-family:var(--font-body);font-size:0.82rem;background:var(--white);transition:border var(--transition)}
+.option-group select:focus,.option-group input:focus{border-color:var(--rose);outline:none;box-shadow:0 0 0 3px rgba(220,119,127,0.08)}
+.option-group.checkbox{display:flex;align-items:center;gap:8px;padding-top:18px;min-width:auto}
+.option-group.checkbox input[type=checkbox]{width:auto;accent-color:var(--rose);cursor:pointer}
+.option-group.checkbox label{margin:0;cursor:pointer;text-transform:none;letter-spacing:0;color:var(--text);font-weight:400;font-size:0.78rem}
+
+/* Preview Grid */
+.preview-section{padding:0 24px 20px}
+.preview-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.preview-header h3{font-size:0.78rem;font-weight:500;color:var(--text)}
+.preview-header .preview-count{font-size:0.68rem;color:var(--text-light)}
+.preview-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:6px;max-height:240px;overflow-y:auto}
+.preview-grid::-webkit-scrollbar{width:4px}
+.preview-grid::-webkit-scrollbar-thumb{background:#ddd;border-radius:2px}
+.preview-item{position:relative;aspect-ratio:1;overflow:hidden;border:1px solid #eee;border-radius:2px;transition:border 0.3s}
+.preview-item img{width:100%;height:100%;object-fit:cover}
+.preview-item .preview-info{position:absolute;inset:0;background:rgba(0,0,0,0.6);display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity 0.3s;gap:2px;padding:4px}
+.preview-item:hover .preview-info{opacity:1}
+.preview-item .preview-info .file-name{font-size:0.5rem;color:var(--white);text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;padding:0 4px}
+.preview-item .preview-info .file-size{font-size:0.45rem;color:rgba(255,255,255,0.5)}
+.preview-item .preview-status{position:absolute;top:4px;right:4px;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.5rem;opacity:0;transition:all 0.3s}
+.preview-item .preview-status.show{opacity:1}
+.preview-item .preview-status.waiting{background:var(--warning-bg);color:var(--warning);border:1px solid rgba(245,127,23,0.3)}
+.preview-item .preview-status.uploading{background:rgba(220,119,127,0.15);color:var(--rose);border:1px solid rgba(220,119,127,0.3);animation:pulseStatus 0.8s ease infinite}
+.preview-item .preview-status.done{background:var(--success-bg);color:var(--success);border:1px solid rgba(46,125,50,0.3)}
+.preview-item .preview-status.error{background:var(--error-bg);color:var(--error);border:1px solid rgba(198,40,40,0.3)}
+@keyframes pulseStatus{0%,100%{opacity:0.6}50%{opacity:1}}
+
+/* Progress Section */
+.progress-section{padding:0 24px 24px;display:none}
+.progress-section.active{display:block}
+.progress-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.progress-header .progress-title{font-size:0.78rem;font-weight:500;color:var(--text)}
+.progress-header .progress-pct{font-size:1rem;font-weight:600;color:var(--rose);font-variant-numeric:tabular-nums}
+.progress-bar-track{height:4px;background:#eee;border-radius:2px;overflow:hidden;position:relative}
+.progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--rose),var(--rose-dark));border-radius:2px;transition:width 0.4s ease;width:0%;position:relative}
+.progress-bar-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent);animation:shimmer 1.5s ease-in-out infinite}
+@keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.progress-metrics{display:flex;flex-wrap:wrap;gap:16px;margin-top:12px;font-size:0.68rem;color:var(--text-light)}
+.progress-metrics span{display:flex;align-items:center;gap:4px}
+.progress-metrics .metric-value{color:var(--text);font-weight:500}
+
+/* File List */
+.file-list-section{padding:0 24px 24px;display:none}
+.file-list-section.active{display:block}
+.file-list-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.file-list-header h3{font-size:0.78rem;font-weight:500;color:var(--text)}
+.file-list-scroll{max-height:260px;overflow-y:auto;border:1px solid #f0f0f0;border-radius:2px}
+.file-list-scroll::-webkit-scrollbar{width:4px}
+.file-list-scroll::-webkit-scrollbar-thumb{background:#ddd;border-radius:2px}
+.file-row{display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid #f5f5f5;transition:background 0.2s;font-size:0.75rem}
+.file-row:last-child{border-bottom:none}
+.file-row:hover{background:var(--cream)}
+.file-row .file-icon{width:28px;height:28px;border-radius:2px;background:var(--rose-light);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.65rem;overflow:hidden}
+.file-row .file-icon img{width:100%;height:100%;object-fit:cover}
+.file-row .file-info{flex:1;min-width:0}
+.file-row .file-info .file-row-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:400;color:var(--text)}
+.file-row .file-info .file-row-size{font-size:0.6rem;color:var(--text-light)}
+.file-row .file-status{font-size:0.6rem;font-weight:500;padding:2px 8px;border-radius:50px;white-space:nowrap;flex-shrink:0}
+.file-status.waiting{background:var(--warning-bg);color:var(--warning)}
+.file-status.uploading{background:rgba(220,119,127,0.1);color:var(--rose)}
+.file-status.done{background:var(--success-bg);color:var(--success)}
+.file-status.error{background:var(--error-bg);color:var(--error)}
+.file-row .file-retry{background:none;border:1px solid var(--rose);color:var(--rose);padding:3px 10px;border-radius:50px;font-size:0.55rem;cursor:pointer;transition:all 0.2s;font-family:var(--font-body);white-space:nowrap;flex-shrink:0}
+.file-row .file-retry:hover{background:var(--rose);color:var(--white)}
+
+/* Action Buttons */
+.upload-actions{display:flex;gap:12px;padding:0 24px 24px;flex-wrap:wrap}
+.btn-primary{flex:1;padding:14px 24px;background:var(--black);color:var(--white);border:none;border-radius:2px;font-family:var(--font-body);font-size:0.7rem;font-weight:500;letter-spacing:2.5px;text-transform:uppercase;cursor:pointer;transition:all var(--transition);min-width:160px;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn-primary:hover{background:var(--rose);color:var(--black)}
+.btn-primary:disabled{opacity:0.25;cursor:default;background:var(--black);color:var(--white)}
+.btn-primary.rose-bg{background:var(--rose);color:var(--black)}
+.btn-primary.rose-bg:hover{background:var(--rose-dark);color:var(--white)}
+.btn-secondary{flex:1;padding:14px 24px;background:transparent;color:var(--text);border:1px solid #ddd;border-radius:2px;font-family:var(--font-body);font-size:0.7rem;font-weight:400;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all var(--transition);min-width:160px;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn-secondary:hover{border-color:var(--rose);color:var(--rose)}
+
+/* Completion Screen */
+.completion-screen{display:none;padding:40px 24px;text-align:center}
+.completion-screen.active{display:block}
+.completion-icon{width:64px;height:64px;margin:0 auto 16px;border-radius:50%;background:var(--success-bg);display:flex;align-items:center;justify-content:center;font-size:1.8rem;animation:completionPop 0.5s cubic-bezier(0.25,0.46,0.45,0.94)}
+@keyframes completionPop{0%{transform:scale(0)}50%{transform:scale(1.12)}100%{transform:scale(1)}}
+.completion-screen h2{font-family:var(--font-display);font-size:1.4rem;font-weight:500;color:var(--black);margin-bottom:4px}
+.completion-screen .completion-sub{font-size:0.82rem;color:var(--text-light);margin-bottom:24px}
+.completion-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;max-width:500px;margin:0 auto 24px}
+.completion-stat{padding:16px;background:var(--cream);border-radius:2px}
+.completion-stat .c-value{font-size:1.1rem;font-weight:600;color:var(--black)}
+.completion-stat .c-label{font-size:0.6rem;color:var(--text-light);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+.completion-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+
+/* Toast */
+.toast-container{position:fixed;top:80px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{pointer-events:auto;padding:14px 20px;border-radius:2px;box-shadow:var(--shadow-md);font-size:0.8rem;display:flex;align-items:center;gap:10px;animation:toastIn 0.4s ease;max-width:380px;transition:all 0.4s}
+.toast.removing{opacity:0;transform:translateX(40px)}
+.toast.success{background:var(--success-bg);color:var(--success);border-left:3px solid var(--success)}
+.toast.error{background:var(--error-bg);color:var(--error);border-left:3px solid var(--error)}
+.toast.info{background:rgba(220,119,127,0.08);color:var(--rose-dark);border-left:3px solid var(--rose)}
+@keyframes toastIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+
+/* ===== MANAGE TAB ===== */
+.manage-toolbar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.manage-search{flex:1;min-width:160px;padding:10px 14px;border:1px solid #e0e0e0;border-radius:2px;font-family:var(--font-body);font-size:0.82rem;transition:border var(--transition)}
+.manage-search:focus{border-color:var(--rose);outline:none;box-shadow:0 0 0 3px rgba(220,119,127,0.08)}
+.empty-msg{text-align:center;padding:48px 0;color:var(--text-light)}
+.empty-msg .icon{font-size:2.5rem;opacity:0.15;margin-bottom:12px;display:block}
+.admin-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-top:12px}
+.admin-item{position:relative;aspect-ratio:1;overflow:hidden;border:1px solid #f0f0f0;background:var(--cream);border-radius:2px;transition:box-shadow 0.3s}
+.admin-item:hover{box-shadow:var(--shadow-md)}
+.admin-item img{width:100%;height:100%;object-fit:cover}
+.admin-item .admin-tag{position:absolute;bottom:6px;left:6px;font-size:0.45rem;background:rgba(13,13,13,0.75);color:var(--rose);padding:2px 7px;text-transform:uppercase;letter-spacing:1px;border-radius:1px}
+.admin-item .admin-del{position:absolute;top:6px;right:6px;background:rgba(0,0,0,0.45);color:#fff;border:none;border-radius:50%;width:26px;height:26px;font-size:0.75rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.3s;opacity:0}
+.admin-item:hover .admin-del{opacity:1}
+.admin-item .admin-del:hover{background:var(--error)}
+.admin-item .admin-copy{position:absolute;top:6px;left:6px;background:rgba(0,0,0,0.45);color:#fff;border:none;border-radius:50%;width:26px;height:26px;font-size:0.65rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.3s;opacity:0}
+.admin-item:hover .admin-copy{opacity:1}
+.admin-item .admin-copy:hover{background:var(--rose);color:var(--white)}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:768px){
+  .header{padding:12px 20px}
+  .header-badge{display:none}
+  .header-back{font-size:0.55rem}
+  .main{padding:20px 12px}
+  .login-box{padding:32px 24px;margin:48px auto}
+  .stats-bar{grid-template-columns:repeat(3,1fr)}
+  .stat-item{padding:14px 8px}
+  .stat-item .stat-value{font-size:1rem}
+  .stat-item .stat-label{font-size:0.5rem}
+  .drop-zone{margin:16px;padding:32px 16px}
+  .upload-options{padding:0 16px 16px;gap:10px}
+  .option-group{min-width:140px}
+  .preview-section{padding:0 16px 16px}
+  .preview-grid{grid-template-columns:repeat(auto-fill,minmax(70px,1fr));max-height:180px}
+  .progress-section{padding:0 16px 20px}
+  .file-list-section{padding:0 16px 20px}
+  .upload-actions{padding:0 16px 20px;flex-direction:column}
+  .btn-primary,.btn-secondary{width:100%}
+  .completion-screen{padding:24px 16px}
+  .completion-stats{grid-template-columns:repeat(2,1fr)}
+  .tabs-bar{gap:2px;padding:3px}
+  .tab-btn{padding:8px 14px;font-size:0.55rem;letter-spacing:1px}
+  .admin-grid{grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px}
+  .admin-item .admin-del,.admin-item .admin-copy{opacity:1;width:24px;height:24px;font-size:0.6rem}
+  .toast-container{right:12px;left:12px;top:72px}
+  .toast{font-size:0.75rem;max-width:100%}
+  .file-row{padding:6px 10px;font-size:0.68rem}
+}
+@media(max-width:480px){
+  .header{padding:10px 16px}
+  .header img{height:18px}
+  .btn-logout{padding:5px 12px;font-size:0.5rem}
+  .stats-bar{grid-template-columns:repeat(2,1fr)}
+  .drop-zone-icon{width:40px;height:40px;font-size:1.1rem}
+  .drop-zone p{font-size:0.8rem}
+  .preview-grid{grid-template-columns:repeat(auto-fill,minmax(60px,1fr))}
+  .upload-options{flex-direction:column}
+  .option-group{min-width:100%}
+  .completion-stats{grid-template-columns:1fr 1fr;gap:8px}
+  .admin-grid{grid-template-columns:repeat(auto-fill,minmax(80px,1fr))}
+}
+@media(hover:none){
+  .admin-item .admin-del,.admin-item .admin-copy{opacity:1}
+  .preview-item .preview-info{opacity:0}
+  .btn-primary,.btn-secondary{min-height:44px}
+  body{cursor:auto}
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-brand">
+    <img src="/logo.png" alt="Dany Semijoias" />
+    <span class="header-badge">Admin</span>
+  </div>
+  <div class="header-actions">
+    <button class="btn-logout" id="logoutBtn" style="display:none">Sair</button>
+    <a class="header-back" href="/">&larr; Site</a>
+  </div>
+</header>
+
+<main class="main">
+  <!-- LOGIN -->
+  <div class="login-box" id="loginSection">
+    <h2>Painel Administrativo</h2>
+    <div class="divider"></div>
+    <p>Acesso restrito. Digite a senha para continuar.</p>
+    <input type="password" id="passwordInput" placeholder="Senha" />
+    <button class="btn-primary" id="loginBtn">Entrar</button>
+    <div class="login-error" id="loginError">Senha incorreta</div>
+  </div>
+
+  <!-- ADMIN PANEL -->
+  <div id="adminSection" style="display:none">
+    <div class="tabs-bar">
+      <button class="tab-btn active" data-tab="upload">Upload</button>
+      <button class="tab-btn" data-tab="manage">Gerenciar</button>
+    </div>
+
+    <!-- ===== UPLOAD TAB ===== -->
+    <div class="tab-content active" id="uploadTab">
+      <div class="upload-dashboard">
+        <!-- Stats Bar -->
+        <div class="stats-bar" id="statsBar">
+          <div class="stat-item"><div class="stat-value" id="statSelected">0</div><div class="stat-label">Selecionadas</div></div>
+          <div class="stat-item"><div class="stat-value success" id="statUploaded">0</div><div class="stat-label">Enviadas</div></div>
+          <div class="stat-item"><div class="stat-value" id="statRemaining">0</div><div class="stat-label">Restantes</div></div>
+          <div class="stat-item"><div class="stat-value" id="statTotalSize">0 MB</div><div class="stat-label">Tamanho Total</div></div>
+          <div class="stat-item"><div class="stat-value" id="statSpeed">—</div><div class="stat-label">Velocidade</div></div>
+          <div class="stat-item"><div class="stat-value rose" id="statETA">—</div><div class="stat-label">Tempo Restante</div></div>
+        </div>
+
+        <!-- Drop Zone -->
+        <div class="drop-zone" id="dropZone">
+          <div class="drop-zone-icon">&#128247;</div>
+          <p><strong>Clique aqui</strong> ou arraste suas fotos</p>
+          <p class="hint">JPG, PNG, WEBP — até 500MB cada</p>
+          <input type="file" id="fileInput" accept="image/*" multiple />
+        </div>
+
+        <!-- Options -->
+        <div class="upload-options">
+          <div class="option-group">
+            <label>Categoria</label>
+            <select id="categorySelect">
+              <option value="corrente">Corrente</option>
+              <option value="colar">Colar</option>
+              <option value="pulseira">Pulseira</option>
+              <option value="anel">Anel</option>
+              <option value="brinco">Brinco</option>
+            </select>
+          </div>
+          <div class="option-group checkbox">
+            <input type="checkbox" id="compressCheck" checked />
+            <label for="compressCheck">Comprimir imagens (máx 1200px)</label>
+          </div>
+        </div>
+
+        <!-- Preview -->
+        <div class="preview-section" id="previewSection" style="display:none">
+          <div class="preview-header">
+            <h3>Pré-visualização</h3>
+            <span class="preview-count" id="previewCount">0 arquivos</span>
+          </div>
+          <div class="preview-grid" id="previewGrid"></div>
+        </div>
+
+        <!-- Progress -->
+        <div class="progress-section" id="progressSection">
+          <div class="progress-header">
+            <span class="progress-title" id="progressTitle">Preparando...</span>
+            <span class="progress-pct" id="progressPct">0%</span>
+          </div>
+          <div class="progress-bar-track">
+            <div class="progress-bar-fill" id="progressFill"></div>
+          </div>
+          <div class="progress-metrics" id="progressMetrics"></div>
+        </div>
+
+        <!-- File List -->
+        <div class="file-list-section" id="fileListSection">
+          <div class="file-list-header">
+            <h3>Arquivos</h3>
+          </div>
+          <div class="file-list-scroll" id="fileListScroll"></div>
+        </div>
+
+        <!-- Actions -->
+        <div class="upload-actions" id="uploadActions">
+          <button class="btn-primary rose-bg" id="startUploadBtn" disabled>Iniciar Upload</button>
+          <button class="btn-secondary" id="clearBtn" style="display:none">Limpar Tudo</button>
+        </div>
+
+        <!-- Completion -->
+        <div class="completion-screen" id="completionScreen">
+          <div class="completion-icon">&#10003;</div>
+          <h2>Upload Concluído</h2>
+          <p class="completion-sub" id="completionSub">Todas as fotos foram enviadas com sucesso.</p>
+          <div class="completion-stats" id="completionStats"></div>
+          <div class="completion-actions">
+            <button class="btn-primary" onclick="showTab('manage');renderAdminGrid()">Visualizar Fotos</button>
+            <button class="btn-secondary" onclick="resetUpload()">Novo Upload</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== MANAGE TAB ===== -->
+    <div class="tab-content" id="manageTab">
+      <div class="card" style="background:var(--white);border:1px solid rgba(0,0,0,0.04);padding:28px">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px">
+          <h2 style="font-family:var(--font-display);font-size:1.1rem;font-weight:500">Gerenciar Fotos</h2>
+          <div style="display:flex;gap:8px">
+            <button class="btn-secondary" style="padding:8px 16px;font-size:0.6rem;min-width:auto" onclick="renderAdminGrid()">Atualizar</button>
+          </div>
+        </div>
+        <input class="manage-search" id="manageSearch" placeholder="Buscar por nome..." oninput="filterAdminGrid()" />
+        <div class="empty-msg" id="emptyMsg" style="display:none">
+          <span class="icon">&#128247;</span>
+          <p>Nenhuma foto ainda. Faça upload na aba "Upload".</p>
+        </div>
+        <div class="admin-grid" id="adminGrid"></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+// ===== STATE =====
+const STATE = { files: [], completed: 0, failed: 0, total: 0, uploadedBytes: 0, totalBytes: 0, startTime: null, isUploading: false, maxConcurrent: 3, activeCount: 0, speedHistory: [], lastBytes: 0, lastTime: 0 };
+const CATEGORY_LABELS = { corrente: 'Corrente', colar: 'Colar', pulseira: 'Pulseira', anel: 'Anel', brinco: 'Brinco' };
+let isAdmin = false;
+let allImagesCache = [];
+
+// ===== HELPERS =====
+function fmtSize(bytes) { if (!bytes) return '0 B'; const u = ['B','KB','MB','GB']; let i = 0; let s = bytes; while (s >= 1024 && i < u.length-1) { s /= 1024; i++; } return s.toFixed(i > 0 ? 1 : 0) + ' ' + u[i]; }
+function fmtTime(sec) { if (!sec || sec < 0 || !isFinite(sec)) return '—'; if (sec < 60) return Math.round(sec) + 's'; const m = Math.floor(sec / 60); const s = Math.round(sec % 60); return m + 'min ' + s + 's'; }
+function fmtDate() { return new Date().toLocaleString('pt-BR'); }
+function uid() { return Math.random().toString(36).slice(2, 9); }
+
+// ===== TOAST =====
+function toast(msg, type = 'info') {
+  const c = document.getElementById('toastContainer');
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  const icons = { success: '&#10003;', error: '&#10007;', info: '&#9679;' };
+  el.innerHTML = (icons[type] || '') + ' ' + msg;
+  c.appendChild(el);
+  setTimeout(() => { el.classList.add('removing'); setTimeout(() => el.remove(), 400); }, 3500);
+}
+
+// ===== LOGIN =====
+document.getElementById('loginBtn').addEventListener('click', async () => {
+  const pass = document.getElementById('passwordInput').value;
+  try {
+    const res = await fetch('/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: pass }) });
+    if (res.ok) {
+      isAdmin = true;
+      document.getElementById('loginSection').style.display = 'none';
+      document.getElementById('adminSection').style.display = 'block';
+      document.getElementById('logoutBtn').style.display = 'block';
+    } else { document.getElementById('loginError').style.display = 'block'; }
+  } catch { document.getElementById('loginError').style.display = 'block'; }
+});
+document.getElementById('passwordInput').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('loginBtn').click(); });
+document.getElementById('logoutBtn').addEventListener('click', () => {
+  isAdmin = false; resetUpload();
+  document.getElementById('loginSection').style.display = 'block';
+  document.getElementById('adminSection').style.display = 'none';
+  document.getElementById('logoutBtn').style.display = 'none';
+  document.getElementById('passwordInput').value = '';
+  document.getElementById('loginError').style.display = 'none';
+});
+
+// ===== TABS =====
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab + 'Tab').classList.add('active');
+    if (btn.dataset.tab === 'manage') renderAdminGrid();
+  });
+});
+function showTab(name) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.toggle('active', c.id === name + 'Tab'));
+  if (name === 'manage') renderAdminGrid();
+}
+
+// ===== FILE SELECTION =====
+const dropZone = document.getElementById('dropZone');
+const fileInput = document.getElementById('fileInput');
+
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('dragover'); if (e.dataTransfer.files.length) addFiles(e.dataTransfer.files); });
+fileInput.addEventListener('change', () => { if (fileInput.files.length) addFiles(fileInput.files); fileInput.value = ''; });
+
+function addFiles(fileList) {
+  if (STATE.isUploading) { toast('Upload em andamento. Aguarde terminar.', 'error'); return; }
+  const valid = Array.from(fileList).filter(f => f.type.startsWith('image/'));
+  if (valid.length === 0) { toast('Nenhuma imagem válida.', 'error'); return; }
+  const newFiles = valid.map(f => ({ id: uid(), file: f, name: f.name, size: f.size, dataUrl: null, status: 'pending', statusText: 'Aguardando', progress: 0 }));
+  STATE.files = STATE.files.concat(newFiles);
+  STATE.totalBytes = STATE.files.reduce((s, f) => s + f.size, 0);
+  updateStats();
+  renderPreview();
+  document.getElementById('previewSection').style.display = 'block';
+  document.getElementById('startUploadBtn').disabled = false;
+  document.getElementById('startUploadBtn').textContent = 'Iniciar Upload (' + STATE.files.length + ')';
+  document.getElementById('clearBtn').style.display = 'block';
+}
+
+function renderPreview() {
+  const grid = document.getElementById('previewGrid');
+  grid.innerHTML = STATE.files.map(f => {
+    const src = f.dataUrl || '';
+    const thumb = src ? `<img src="${src}" alt="" />` : `<div style="width:100%;height:100%;background:var(--rose-light);display:flex;align-items:center;justify-content:center;font-size:0.6rem;color:var(--rose)">&#128247;</div>`;
+    const statusClass = f.status === 'pending' ? '' : f.status === 'uploading' ? 'uploading' : f.status === 'done' ? 'done' : 'error';
+    return `<div class="preview-item" data-id="${f.id}">
+      ${thumb}
+      <div class="preview-info"><span class="file-name">${f.name}</span><span class="file-size">${fmtSize(f.size)}</span></div>
+      <div class="preview-status ${statusClass} show">${f.status === 'done' ? '&#10003;' : f.status === 'error' ? '&#10007;' : f.status === 'uploading' ? '&#9679;' : ''}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('previewCount').textContent = STATE.files.length + ' arquivo' + (STATE.files.length !== 1 ? 's' : '');
+}
+
+function updateStats() {
+  const total = STATE.files.length;
+  const done = STATE.files.filter(f => f.status === 'done').length;
+  const failed = STATE.files.filter(f => f.status === 'error').length;
+  const remaining = total - done - failed;
+  document.getElementById('statSelected').textContent = total;
+  document.getElementById('statUploaded').textContent = done;
+  document.getElementById('statRemaining').textContent = remaining;
+  document.getElementById('statTotalSize').textContent = fmtSize(STATE.totalBytes);
+}
+
+// ===== UPLOAD ENGINE =====
+document.getElementById('startUploadBtn').addEventListener('click', startUpload);
+document.getElementById('clearBtn').addEventListener('click', resetUpload);
+
+async function startUpload() {
+  if (STATE.isUploading || STATE.files.length === 0) return;
+  STATE.isUploading = true;
+  STATE.startTime = Date.now();
+  STATE.lastTime = Date.now();
+  STATE.lastBytes = 0;
+  STATE.speedHistory = [];
+  STATE.completed = 0;
+  STATE.failed = 0;
+  STATE.uploadedBytes = 0;
+
+  document.getElementById('startUploadBtn').disabled = true;
+  document.getElementById('startUploadBtn').textContent = 'Enviando...';
+  document.getElementById('clearBtn').style.display = 'none';
+  document.getElementById('progressSection').classList.add('active');
+  document.getElementById('fileListSection').classList.add('active');
+  document.getElementById('completionScreen').classList.remove('active');
+  document.getElementById('progressTitle').textContent = 'Upload em andamento...';
+  document.getElementById('progressPct').textContent = '0%';
+  document.getElementById('progressFill').style.width = '0%';
+  renderFileList();
+
+  const compress = document.getElementById('compressCheck').checked;
+  const category = document.getElementById('categorySelect').value;
+
+  // Pre-compress files if needed
+  if (compress) {
+    document.getElementById('progressTitle').textContent = 'Comprimindo imagens...';
+    for (const f of STATE.files) {
+      if (f.status !== 'pending') continue;
+      f.status = 'uploading';
+      f.statusText = 'Comprimindo...';
+      updateFileRow(f.id);
+      try { f.dataUrl = await compressImage(f.file); f.file = dataURLtoFile(f.dataUrl, f.name); f.status = 'pending'; f.statusText = 'Aguardando'; } catch { f.status = 'pending'; f.statusText = 'Aguardando'; }
+    }
+    renderPreview();
+    renderFileList();
+  } else {
+    // Still generate thumbnails
+    for (const f of STATE.files) {
+      if (f.dataUrl) continue;
+      try { f.dataUrl = await readAsDataURL(f.file); } catch {}
+    }
+    renderPreview();
+  }
+
+  document.getElementById('progressTitle').textContent = 'Upload em andamento...';
+
+  // Process queue
+  const pending = STATE.files.filter(f => f.status === 'pending' || f.status === 'error');
+  STATE.total = pending.length;
+  let active = 0;
+  let index = 0;
+
+  return new Promise(resolve => {
+    async function next() {
+      while (active < STATE.maxConcurrent && index < pending.length) {
+        const f = pending[index++];
+        if (!f) break;
+        active++;
+        uploadOne(f, category).finally(() => {
+          active--;
+          updateStats();
+          updateProgress();
+          if (active === 0 && index >= pending.length) {
+            finishUpload();
+            resolve();
+          } else {
+            next();
+          }
+        });
+      }
+    }
+    next();
+  });
+}
+
+async function uploadOne(f, category) {
+  f.status = 'uploading';
+  f.statusText = 'Enviando...';
+  updateFileRow(f.id);
+  updatePreviewStatus(f.id, 'uploading');
+
+  const start = Date.now();
+  try {
+    const fd = new FormData();
+    fd.append('category', category);
+    fd.append('images', f.file, f.name);
+
+    const resp = await fetch('/api/upload', { method: 'POST', body: fd });
+    if (!resp.ok) throw new Error('Erro no servidor');
+
+    f.status = 'done';
+    f.statusText = 'Concluído';
+    STATE.uploadedBytes += f.size;
+    STATE.completed++;
+    updateFileRow(f.id);
+    updatePreviewStatus(f.id, 'done');
+    updateSpeed(f.size, Date.now() - start);
+  } catch (e) {
+    f.status = 'error';
+    f.statusText = e.message || 'Erro';
+    STATE.failed++;
+    updateFileRow(f.id);
+    updatePreviewStatus(f.id, 'error');
+  }
+}
+
+function updateProgress() {
+  const total = STATE.files.length;
+  const done = STATE.files.filter(f => f.status === 'done').length;
+  const failed = STATE.files.filter(f => f.status === 'error').length;
+  const processed = done + failed;
+  const pct = total > 0 ? Math.round((processed / total) * 100) : 0;
+
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('statUploaded').textContent = done;
+  document.getElementById('statRemaining').textContent = total - done - failed;
+
+  // Speed & ETA
+  const elapsed = (Date.now() - STATE.startTime) / 1000;
+  const speed = STATE.uploadedBytes / (elapsed || 1);
+  document.getElementById('statSpeed').textContent = fmtSize(speed) + '/s';
+
+  const remaining = total - processed;
+  const eta = remaining > 0 && speed > 0 ? remaining * (STATE.totalBytes / total) / speed : 0;
+  document.getElementById('statETA').textContent = fmtTime(eta);
+
+  const metrics = document.getElementById('progressMetrics');
+  metrics.innerHTML = `
+    <span>&#9889; <span class="metric-value">${done}</span> enviadas</span>
+    <span>&#10060; <span class="metric-value">${failed}</span> falhas</span>
+    <span>&#9201; <span class="metric-value">${fmtSize(STATE.uploadedBytes)}</span> de <span class="metric-value">${fmtSize(STATE.totalBytes)}</span></span>
+    <span>&#9889; <span class="metric-value">${fmtSize(speed)}</span>/s</span>
+    <span>&#9200; <span class="metric-value">${fmtTime(eta)}</span> restantes</span>
+  `;
+}
+
+function updateSpeed(bytes, timeMs) {
+  if (timeMs <= 0) return;
+  const speed = bytes / (timeMs / 1000);
+  STATE.speedHistory.push(speed);
+  if (STATE.speedHistory.length > 10) STATE.speedHistory.shift();
+  const avg = STATE.speedHistory.reduce((s, v) => s + v, 0) / STATE.speedHistory.length;
+  document.getElementById('statSpeed').textContent = fmtSize(avg) + '/s';
+}
+
+function finishUpload() {
+  STATE.isUploading = false;
+  const total = STATE.files.length;
+  const done = STATE.files.filter(f => f.status === 'done').length;
+  const failed = STATE.files.filter(f => f.status === 'error').length;
+  const elapsed = (Date.now() - STATE.startTime) / 1000;
+
+  document.getElementById('progressTitle').textContent = 'Upload concluído!';
+  document.getElementById('progressPct').textContent = '100%';
+  document.getElementById('progressFill').style.width = '100%';
+  document.getElementById('completionSub').textContent = failed > 0
+    ? done + ' foto' + (done !== 1 ? 's' : '') + ' enviada' + (done !== 1 ? 's' : '') + ', ' + failed + ' com erro.'
+    : 'Todas as ' + total + ' foto' + (total !== 1 ? 's' : '') + ' foram enviadas com sucesso.';
+  document.getElementById('completionStats').innerHTML = `
+    <div class="completion-stat"><div class="c-value">${done}</div><div class="c-label">Enviadas</div></div>
+    <div class="completion-stat"><div class="c-value">${fmtSize(STATE.uploadedBytes)}</div><div class="c-label">Enviado</div></div>
+    <div class="completion-stat"><div class="c-value">${fmtTime(elapsed)}</div><div class="c-label">Tempo Total</div></div>
+    <div class="completion-stat"><div class="c-value">${fmtDate()}</div><div class="c-label">Finalizado</div></div>
+  `;
+  document.getElementById('completionScreen').classList.add('active');
+  document.getElementById('startUploadBtn').style.display = 'none';
+
+  toast('Upload concluído! ' + done + ' foto' + (done !== 1 ? 's' : '') + ' enviada' + (done !== 1 ? 's' : '') + '.', 'success');
+  if (failed > 0) toast(failed + ' foto' + (failed !== 1 ? 's' : '') + ' com erro. Passe na aba Gerenciar para rever.', 'error');
+  updateStats();
+  renderAdminGrid();
+}
+
+// ===== FILE LIST =====
+function renderFileList() {
+  const scroll = document.getElementById('fileListScroll');
+  scroll.innerHTML = STATE.files.map(f => {
+    const statusClass = f.status === 'pending' ? 'waiting' : f.status === 'uploading' ? 'uploading' : f.status === 'done' ? 'done' : 'error';
+    const thumb = f.dataUrl ? `<img src="${f.dataUrl}" alt="" />` : '&#128247;';
+    const retryBtn = f.status === 'error' ? `<button class="file-retry" onclick="retryFile('${f.id}')">Tentar</button>` : '';
+    return `<div class="file-row" data-id="${f.id}">
+      <div class="file-icon">${thumb}</div>
+      <div class="file-info"><div class="file-row-name">${f.name}</div><div class="file-row-size">${fmtSize(f.size)}</div></div>
+      <span class="file-status ${statusClass}">${f.statusText}</span>
+      ${retryBtn}
+    </div>`;
+  }).join('');
+}
+
+function updateFileRow(id) {
+  const row = document.querySelector(`.file-row[data-id="${id}"]`);
+  if (!row) return;
+  const f = STATE.files.find(x => x.id === id);
+  if (!f) return;
+  const statusClass = f.status === 'pending' ? 'waiting' : f.status === 'uploading' ? 'uploading' : f.status === 'done' ? 'done' : 'error';
+  row.querySelector('.file-status').className = 'file-status ' + statusClass;
+  row.querySelector('.file-status').textContent = f.statusText;
+  let retryBtn = row.querySelector('.file-retry');
+  if (f.status === 'error' && !retryBtn) {
+    const btn = document.createElement('button');
+    btn.className = 'file-retry'; btn.textContent = 'Tentar'; btn.onclick = () => retryFile(id);
+    row.appendChild(btn);
+  } else if (f.status !== 'error' && retryBtn) { retryBtn.remove(); }
+}
+
+function updatePreviewStatus(id, status) {
+  const el = document.querySelector(`.preview-item[data-id="${id}"] .preview-status`);
+  if (!el) return;
+  el.className = 'preview-status show ' + status;
+  el.innerHTML = status === 'done' ? '&#10003;' : status === 'error' ? '&#10007;' : status === 'uploading' ? '&#9679;' : '';
+}
+
+// ===== RETRY =====
+async function retryFile(id) {
+  if (STATE.isUploading) return;
+  const f = STATE.files.find(x => x.id === id);
+  if (!f || f.status !== 'error') return;
+  f.status = 'pending';
+  f.statusText = 'Aguardando';
+  updateFileRow(id);
+  updatePreviewStatus(id, '');
+  await startUpload();
+}
+
+// ===== RESET =====
+function resetUpload() {
+  STATE.files = [];
+  STATE.isUploading = false;
+  STATE.totalBytes = 0;
+  STATE.uploadedBytes = 0;
+  STATE.completed = 0;
+  STATE.failed = 0;
+  document.getElementById('previewGrid').innerHTML = '';
+  document.getElementById('previewSection').style.display = 'none';
+  document.getElementById('progressSection').classList.remove('active');
+  document.getElementById('fileListSection').classList.remove('active');
+  document.getElementById('completionScreen').classList.remove('active');
+  document.getElementById('startUploadBtn').style.display = 'block';
+  document.getElementById('startUploadBtn').disabled = true;
+  document.getElementById('startUploadBtn').textContent = 'Iniciar Upload';
+  document.getElementById('clearBtn').style.display = 'none';
+  document.getElementById('progressPct').textContent = '0%';
+  document.getElementById('progressFill').style.width = '0%';
+  document.getElementById('statSelected').textContent = '0';
+  document.getElementById('statUploaded').textContent = '0';
+  document.getElementById('statRemaining').textContent = '0';
+  document.getElementById('statTotalSize').textContent = '0 MB';
+  document.getElementById('statSpeed').textContent = '—';
+  document.getElementById('statETA').textContent = '—';
+  document.getElementById('progressMetrics').innerHTML = '';
+  document.getElementById('completionStats').innerHTML = '';
+}
+
+// ===== IMAGE COMPRESSION =====
+function compressImage(file) {
+  return new Promise((resolve, reject) => {
+    if (file.size <= 100 * 1024) { readAsDataURL(file).then(resolve).catch(reject); return; }
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        let w = img.width, h = img.height;
+        const max = 1200;
+        if (w > max || h > max) { const r = Math.min(max / w, max / h); w = Math.round(w * r); h = Math.round(h * r); }
+        const c = document.createElement('canvas'); c.width = w; c.height = h;
+        c.getContext('2d').drawImage(img, 0, 0, w, h);
+        resolve(c.toDataURL('image/jpeg', 0.82));
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function readAsDataURL(file) {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = e => resolve(e.target.result);
+    r.onerror = reject;
+    r.readAsDataURL(file);
+  });
+}
+
+function dataURLtoFile(dataUrl, name) {
+  const parts = dataUrl.split(',');
+  const mime = parts[0].match(/:(.*?);/)[1];
+  const bytes = atob(parts[1]);
+  const arr = new Uint8Array(bytes.length);
+  for (let i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
+  return new File([arr], name, { type: mime });
+}
+
+// ===== MANAGE =====
+const adminGrid = document.getElementById('adminGrid');
+const emptyMsg = document.getElementById('emptyMsg');
+let manageImages = [];
+
+async function renderAdminGrid() {
+  try {
+    const res = await fetch('/api/images');
+    manageImages = await res.json();
+    allImagesCache = manageImages;
+    filterAdminGrid();
+  } catch { adminGrid.innerHTML = '<div class="empty-msg"><p>Erro ao carregar.</p></div>'; }
+}
+
+function filterAdminGrid() {
+  const q = document.getElementById('manageSearch').value.toLowerCase();
+  const filtered = q ? manageImages.filter(i => (i.originalName || '').toLowerCase().includes(q)) : manageImages;
+  if (filtered.length === 0) { adminGrid.innerHTML = ''; emptyMsg.style.display = 'block'; return; }
+  emptyMsg.style.display = 'none';
+  adminGrid.innerHTML = filtered.map(img =>
+    `<div class="admin-item">
+      <img src="/uploads/${img.category}/${img.filename}" alt="" loading="lazy" />
+      <span class="admin-tag">${CATEGORY_LABELS[img.category] || img.category}</span>
+      <button class="admin-copy" onclick="copyUrl('${img.id}')" title="Copiar link">&#128203;</button>
+      <button class="admin-del" onclick="deleteImg('${img.id}')">&times;</button>
+    </div>`
+  ).join('');
+}
+
+async function deleteImg(id) {
+  if (!confirm('Remover esta foto?')) return;
+  try {
+    await fetch('/api/image/' + id, { method: 'DELETE' });
+    toast('Foto removida.', 'success');
+    renderAdminGrid();
+  } catch { toast('Erro ao remover.', 'error'); }
+}
+
+function copyUrl(id) {
+  const img = allImagesCache.find(i => i.id === id);
+  if (img) {
+    const url = location.origin + '/uploads/' + img.category + '/' + img.filename;
+    navigator.clipboard.writeText(url).then(() => toast('Link copiado!', 'success'))
+      .catch(() => { prompt('Copie o link:', url); });
+  }
+}
+
+// ===== INIT =====
+renderAdminGrid();
+</script>
+</body>
+</html>

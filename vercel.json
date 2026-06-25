@@ -17,5 +17,12 @@
   "routes": [
     { "src": "/admin", "dest": "/admin.html" },
     { "src": "/api/(.*)", "dest": "api/index.js" }
-  ]
+  ],
+  "env": {
+    "SUPABASE_URL": "https://ckbdrzaynuxlzrndnptz.supabase.co",
+    "SUPABASE_SERVICE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNrYmRyemF5bnV4bHpybmRucHR6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MjQxNzE2MywiZXhwIjoyMDk3OTkzMTYzfQ.xSnwHGkr0_kgzecLq70UGumASTSB2NgY_a5A2OyDXpo",
+    "IMAGEKIT_PUBLIC_KEY": "public_p1ZdRJIMLAAQirra+GgGvT8nly4=",
+    "IMAGEKIT_PRIVATE_KEY": "private_phUPz9fQyuFTeyeUyf2vM3AS0mQ=",
+    "IMAGEKIT_URL_ENDPOINT": "https://ik.imagekit.io/danysemijoias"
+  }
 }

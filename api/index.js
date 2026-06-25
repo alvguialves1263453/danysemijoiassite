@@ -4,7 +4,6 @@ const multer = require('multer');
 const { createClient } = require('@supabase/supabase-js');
 const ImageKit = require('imagekit');
 const serverless = require('serverless-http');
-const crypto = require('crypto');
 
 const app = express();
 const router = express.Router();
@@ -130,6 +129,5 @@ router.get('/download/:id', async (req, res) => {
 });
 
 app.use('/api', router);
-app.use(express.static('/var/task'));
 
 module.exports.handler = serverless(app);

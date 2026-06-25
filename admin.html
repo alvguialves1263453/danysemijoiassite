@@ -175,17 +175,25 @@ a{text-decoration:none;color:inherit}
 .manage-search:focus{border-color:var(--rose);outline:none;box-shadow:0 0 0 3px rgba(220,119,127,0.08)}
 .empty-msg{text-align:center;padding:48px 0;color:var(--text-light)}
 .empty-msg .icon{font-size:2.5rem;opacity:0.15;margin-bottom:12px;display:block}
-.admin-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-top:12px}
-.admin-item{position:relative;aspect-ratio:1;overflow:hidden;border:1px solid #f0f0f0;background:var(--cream);border-radius:2px;transition:box-shadow 0.3s}
+.admin-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-top:12px}
+.admin-item{position:relative;overflow:hidden;border:1px solid #f0f0f0;background:var(--white);border-radius:4px;transition:box-shadow 0.3s;display:flex;flex-direction:column}
 .admin-item:hover{box-shadow:var(--shadow-md)}
-.admin-item img{width:100%;height:100%;object-fit:cover}
-.admin-item .admin-tag{position:absolute;bottom:6px;left:6px;font-size:0.45rem;background:rgba(13,13,13,0.75);color:var(--rose);padding:2px 7px;text-transform:uppercase;letter-spacing:1px;border-radius:1px}
-.admin-item .admin-del{position:absolute;top:6px;right:6px;background:rgba(0,0,0,0.45);color:#fff;border:none;border-radius:50%;width:26px;height:26px;font-size:0.75rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.3s;opacity:0}
-.admin-item:hover .admin-del{opacity:1}
-.admin-item .admin-del:hover{background:var(--error)}
-.admin-item .admin-copy{position:absolute;top:6px;left:6px;background:rgba(0,0,0,0.45);color:#fff;border:none;border-radius:50%;width:26px;height:26px;font-size:0.65rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.3s;opacity:0}
-.admin-item:hover .admin-copy{opacity:1}
-.admin-item .admin-copy:hover{background:var(--rose);color:var(--white)}
+.admin-item .admin-img-wrap{position:relative;aspect-ratio:1;overflow:hidden;background:var(--cream)}
+.admin-item .admin-img-wrap img{width:100%;height:100%;object-fit:cover;transition:transform 0.4s}
+.admin-item:hover .admin-img-wrap img{transform:scale(1.04)}
+.admin-item .admin-tag{position:absolute;bottom:6px;left:6px;font-size:0.45rem;background:rgba(13,13,13,0.75);color:var(--rose);padding:2px 7px;text-transform:uppercase;letter-spacing:1px;border-radius:2px}
+.admin-item .admin-body{padding:10px 12px 12px;flex:1;display:flex;flex-direction:column;gap:4px}
+.admin-item .admin-name{font-size:0.72rem;color:var(--text);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.admin-item .admin-name.editable{cursor:text;border-bottom:1px dashed #ddd;padding:2px 0}
+.admin-item .admin-name.editable:hover{border-color:var(--rose)}
+.admin-item .admin-name input{width:100%;border:1px solid var(--rose);padding:2px 6px;font-size:0.72rem;font-family:var(--font-body);border-radius:2px;outline:none}
+.admin-item .admin-meta{font-size:0.55rem;color:var(--text-light);display:flex;justify-content:space-between}
+.admin-item .admin-actions{display:flex;gap:4px;padding:0 12px 10px}
+.admin-item .admin-actions button{flex:1;padding:5px 0;border:none;border-radius:2px;font-size:0.5rem;font-family:var(--font-body);letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all 0.2s}
+.admin-item .admin-btn-top{background:rgba(220,119,127,0.08);color:var(--rose)}
+.admin-item .admin-btn-top:hover{background:var(--rose);color:var(--white)}
+.admin-item .admin-btn-del{background:rgba(198,40,40,0.08);color:var(--error)}
+.admin-item .admin-btn-del:hover{background:var(--error);color:var(--white)}
 
 /* ===== RESPONSIVE ===== */
 @media(max-width:768px){
@@ -211,8 +219,9 @@ a{text-decoration:none;color:inherit}
   .completion-stats{grid-template-columns:repeat(2,1fr)}
   .tabs-bar{gap:2px;padding:3px}
   .tab-btn{padding:8px 14px;font-size:0.55rem;letter-spacing:1px}
-  .admin-grid{grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px}
-  .admin-item .admin-del,.admin-item .admin-copy{opacity:1;width:24px;height:24px;font-size:0.6rem}
+  .admin-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+  .admin-item .admin-actions{opacity:1;flex-direction:column;gap:3px;padding:0 10px 10px}
+  .admin-item .admin-actions button{padding:6px 0;font-size:0.5rem}
   .toast-container{right:12px;left:12px;top:72px}
   .toast{font-size:0.75rem;max-width:100%}
   .file-row{padding:6px 10px;font-size:0.68rem}
@@ -228,10 +237,10 @@ a{text-decoration:none;color:inherit}
   .upload-options{flex-direction:column}
   .option-group{min-width:100%}
   .completion-stats{grid-template-columns:1fr 1fr;gap:8px}
-  .admin-grid{grid-template-columns:repeat(auto-fill,minmax(80px,1fr))}
+  .admin-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
 }
 @media(hover:none){
-  .admin-item .admin-del,.admin-item .admin-copy{opacity:1}
+  .admin-item .admin-actions{opacity:1}
   .preview-item .preview-info{opacity:0}
   .btn-primary,.btn-secondary{min-height:44px}
   body{cursor:auto}
@@ -366,10 +375,20 @@ a{text-decoration:none;color:inherit}
             <button class="btn-secondary" style="padding:8px 16px;font-size:0.6rem;min-width:auto" onclick="renderAdminGrid()">Atualizar</button>
           </div>
         </div>
-        <input class="manage-search" id="manageSearch" placeholder="Buscar por nome..." oninput="filterAdminGrid()" />
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+          <input class="manage-search" id="manageSearch" placeholder="Buscar por nome..." oninput="filterAdminGrid()" style="flex:1;min-width:160px" />
+          <select id="manageCategoryFilter" onchange="filterAdminGrid()" style="padding:10px 14px;border:1px solid #e0e0e0;border-radius:2px;font-family:var(--font-body);font-size:0.82rem;background:var(--white);min-width:140px">
+            <option value="todos">Todas categorias</option>
+            <option value="corrente">Corrente</option>
+            <option value="colar">Colar</option>
+            <option value="pulseira">Pulseira</option>
+            <option value="anel">Anel</option>
+            <option value="brinco">Brinco</option>
+          </select>
+        </div>
         <div class="empty-msg" id="emptyMsg" style="display:none">
           <span class="icon">&#128247;</span>
-          <p>Nenhuma foto ainda. Faça upload na aba "Upload".</p>
+          <p>Nenhuma foto encontrada.</p>
         </div>
         <div class="admin-grid" id="adminGrid"></div>
       </div>
@@ -809,17 +828,73 @@ async function renderAdminGrid() {
 
 function filterAdminGrid() {
   const q = document.getElementById('manageSearch').value.toLowerCase();
-  const filtered = q ? manageImages.filter(i => (i.original_name || '').toLowerCase().includes(q)) : manageImages;
+  const cat = document.getElementById('manageCategoryFilter').value;
+  let filtered = manageImages;
+  if (q) filtered = filtered.filter(i => (i.original_name || '').toLowerCase().includes(q));
+  if (cat && cat !== 'todos') filtered = filtered.filter(i => i.category === cat);
   if (filtered.length === 0) { adminGrid.innerHTML = ''; emptyMsg.style.display = 'block'; return; }
   emptyMsg.style.display = 'none';
-  adminGrid.innerHTML = filtered.map(img =>
-    `<div class="admin-item">
-      <img src="${img.imagekit_url}" alt="" loading="lazy" />
-      <span class="admin-tag">${CATEGORY_LABELS[img.category] || img.category}</span>
-      <button class="admin-copy" onclick="copyUrl('${img.id}')" title="Copiar link">&#128203;</button>
-      <button class="admin-del" onclick="deleteImg('${img.id}')">&times;</button>
-    </div>`
-  ).join('');
+  adminGrid.innerHTML = filtered.map(img => {
+    const date = new Date(img.uploaded_at).toLocaleDateString('pt-BR');
+    return `<div class="admin-item" data-id="${img.id}">
+      <div class="admin-img-wrap">
+        <img src="${img.imagekit_url}" alt="" loading="lazy" />
+        <span class="admin-tag">${CATEGORY_LABELS[img.category] || img.category}</span>
+      </div>
+      <div class="admin-body">
+        <div class="admin-name editable" onclick="editName(this,'${img.id}')" title="Clique para editar">${img.original_name || 'Sem nome'}</div>
+        <div class="admin-meta">
+          <span>${date}</span>
+          <span>${fmtSize(img.size)}</span>
+        </div>
+      </div>
+      <div class="admin-actions">
+        <button class="admin-btn-top" onclick="moveToTop('${img.id}')" title="Mover para o topo">Topo</button>
+        <button class="admin-btn-del" onclick="deleteImg('${img.id}')" title="Remover">Remover</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function editName(el, id) {
+  const current = el.textContent;
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.value = current === 'Sem nome' ? '' : current;
+  input.autofocus = true;
+  el.innerHTML = '';
+  el.appendChild(input);
+  input.focus();
+  input.select();
+
+  async function save() {
+    const val = input.value.trim() || 'Sem nome';
+    try {
+      const res = await fetch('/api/image/' + id, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ original_name: val }),
+      });
+      if (!res.ok) throw Error();
+    } catch {}
+    renderAdminGrid();
+  }
+
+  input.addEventListener('blur', save);
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); input.blur(); } if (e.key === 'Escape') { renderAdminGrid(); } });
+}
+
+async function moveToTop(id) {
+  try {
+    const res = await fetch('/api/images/reorder', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, position: 'top' }),
+    });
+    if (!res.ok) throw Error();
+    toast('Imagem movida para o topo.', 'success');
+    renderAdminGrid();
+  } catch { toast('Erro ao reordenar.', 'error'); }
 }
 
 async function deleteImg(id) {
@@ -835,9 +910,8 @@ async function deleteImg(id) {
 function copyUrl(id) {
   const img = allImagesCache.find(i => i.id === id);
   if (img) {
-    const url = img.imagekit_url;
-    navigator.clipboard.writeText(url).then(() => toast('Link copiado!', 'success'))
-      .catch(() => { prompt('Copie o link:', url); });
+    navigator.clipboard.writeText(img.imagekit_url).then(() => toast('Link copiado!', 'success'))
+      .catch(() => { prompt('Copie o link:', img.imagekit_url); });
   }
 }
 

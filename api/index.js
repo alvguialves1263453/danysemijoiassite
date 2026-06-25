@@ -70,7 +70,7 @@ router.post('/login', async (req, res) => {
 router.get('/images', async (req, res) => {
   if (!supabase) return res.status(500).json({ error: 'Banco não configurado' });
   try {
-    let query = supabase.from('images').select('*').order('uploaded_at', { ascending: false });
+    let query = supabase.from('images').select('*').order('sort_order', { ascending: true }).order('uploaded_at', { ascending: false });
     const category = req.query.category;
     if (category && category !== 'todos') {
       query = query.eq('category', category);
@@ -91,6 +91,9 @@ router.post('/upload', upload.array('images', 50), async (req, res) => {
     }
     const category = req.body.category || 'corrente';
 
+    const { data: maxOrder } = await supabase.from('images').select('sort_order').order('sort_order', { ascending: false }).limit(1);
+    let nextOrder = (maxOrder?.[0]?.sort_order ?? -1) + 1;
+
     const results = [];
     for (const file of req.files) {
       const ikRes = await imagekit.upload({
@@ -107,6 +110,7 @@ router.post('/upload', upload.array('images', 50), async (req, res) => {
         size: file.size,
         imagekit_url: ikRes.url,
         imagekit_file_id: ikRes.fileId,
+        sort_order: nextOrder++,
       };
 
       const { data, error } = await supabase.from('images').insert(record).select().single();
@@ -115,6 +119,22 @@ router.post('/upload', upload.array('images', 50), async (req, res) => {
     }
 
     res.json({ success: true, images: results });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.patch('/image/:id', async (req, res) => {
+  if (!supabase) return res.status(500).json({ error: 'Banco não configurado' });
+  try {
+    const { original_name, sort_order } = req.body;
+    const updates = {};
+    if (original_name !== undefined) updates.original_name = original_name;
+    if (sort_order !== undefined) updates.sort_order = sort_order;
+
+    const { data, error } = await supabase.from('images').update(updates).eq('id', req.params.id).select().single();
+    if (error) throw error;
+    res.json(data);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -130,6 +150,31 @@ router.delete('/image/:id', async (req, res) => {
 
     const { error: delErr } = await supabase.from('images').delete().eq('id', req.params.id);
     if (delErr) throw delErr;
+
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.post('/images/reorder', async (req, res) => {
+  if (!supabase) return res.status(500).json({ error: 'Banco não configurado' });
+  try {
+    const { id, position } = req.body;
+    const { data: allImages, error: fetchErr } = await supabase.from('images').select('id').order('sort_order', { ascending: true }).order('uploaded_at', { ascending: false });
+    if (fetchErr) throw fetchErr;
+
+    const ids = allImages.map(i => i.id);
+    const idx = ids.indexOf(id);
+    if (idx === -1) return res.status(404).json({ error: 'Imagem não encontrada' });
+
+    ids.splice(idx, 1);
+    let newPos = position === 'top' ? 0 : position === 'bottom' ? ids.length : Math.min(position, ids.length);
+    ids.splice(newPos, 0, id);
+
+    const updates = ids.map((imgId, i) => ({ id: imgId, sort_order: i }));
+    const { error: updateErr } = await supabase.from('images').upsert(updates);
+    if (updateErr) throw updateErr;
 
     res.json({ success: true });
   } catch (err) {

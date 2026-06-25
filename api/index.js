@@ -13,15 +13,24 @@ const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const IMAGEKIT_PUBLIC_KEY = process.env.IMAGEKIT_PUBLIC_KEY;
 const IMAGEKIT_PRIVATE_KEY = process.env.IMAGEKIT_PRIVATE_KEY;
 const IMAGEKIT_URL_ENDPOINT = process.env.IMAGEKIT_URL_ENDPOINT;
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'danyadmin';
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
+let supabase = null;
+try {
+  if (SUPABASE_URL && SUPABASE_SERVICE_KEY) {
+    supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
+  }
+} catch {}
 
-const imagekit = new ImageKit({
-  publicKey: IMAGEKIT_PUBLIC_KEY,
-  privateKey: IMAGEKIT_PRIVATE_KEY,
-  urlEndpoint: IMAGEKIT_URL_ENDPOINT,
-});
+let imagekit = null;
+try {
+  if (IMAGEKIT_PUBLIC_KEY && IMAGEKIT_PRIVATE_KEY && IMAGEKIT_URL_ENDPOINT) {
+    imagekit = new ImageKit({
+      publicKey: IMAGEKIT_PUBLIC_KEY,
+      privateKey: IMAGEKIT_PRIVATE_KEY,
+      urlEndpoint: IMAGEKIT_URL_ENDPOINT,
+    });
+  }
+} catch {}
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -37,8 +46,17 @@ const upload = multer({
 
 router.use(express.json());
 
-router.post('/login', (req, res) => {
-  if (req.body.password === ADMIN_PASSWORD) {
+async function getAdminPassword() {
+  if (!supabase) return null;
+  try {
+    const { data } = await supabase.from('admin_config').select('value').eq('key', 'password').single();
+    return data?.value || null;
+  } catch { return null; }
+}
+
+router.post('/login', async (req, res) => {
+  const password = await getAdminPassword();
+  if (password && req.body.password === password) {
     res.json({ success: true });
   } else {
     res.status(401).json({ error: 'Senha incorreta' });
@@ -46,6 +64,7 @@ router.post('/login', (req, res) => {
 });
 
 router.get('/images', async (req, res) => {
+  if (!supabase) return res.status(500).json({ error: 'Banco não configurado' });
   try {
     let query = supabase.from('images').select('*').order('uploaded_at', { ascending: false });
     const category = req.query.category;
@@ -61,6 +80,7 @@ router.get('/images', async (req, res) => {
 });
 
 router.post('/upload', upload.array('images', 50), async (req, res) => {
+  if (!supabase || !imagekit) return res.status(500).json({ error: 'Serviços não configurados' });
   try {
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({ error: 'Nenhuma imagem enviada' });
@@ -97,6 +117,7 @@ router.post('/upload', upload.array('images', 50), async (req, res) => {
 });
 
 router.delete('/image/:id', async (req, res) => {
+  if (!supabase || !imagekit) return res.status(500).json({ error: 'Serviços não configurados' });
   try {
     const { data: img, error: findErr } = await supabase.from('images').select('*').eq('id', req.params.id).single();
     if (findErr || !img) return res.status(404).json({ error: 'Imagem não encontrada' });
@@ -113,6 +134,7 @@ router.delete('/image/:id', async (req, res) => {
 });
 
 router.get('/download/:id', async (req, res) => {
+  if (!supabase || !imagekit) return res.status(500).json({ error: 'Serviços não configurados' });
   try {
     const { data: img, error } = await supabase.from('images').select('*').eq('id', req.params.id).single();
     if (error || !img) return res.status(404).json({ error: 'Imagem não encontrada' });

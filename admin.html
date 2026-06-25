@@ -520,6 +520,12 @@ function addFiles(fileList) {
   document.getElementById('startUploadBtn').disabled = false;
   document.getElementById('startUploadBtn').textContent = 'Iniciar Upload (' + STATE.files.length + ')';
   document.getElementById('clearBtn').style.display = 'block';
+  // Read files for preview
+  newFiles.forEach(f => {
+    const r = new FileReader();
+    r.onload = e => { f.dataUrl = e.target.result; renderPreview(); };
+    r.readAsDataURL(f.file);
+  });
 }
 
 function renderPreview() {

@@ -848,6 +848,9 @@ document.addEventListener('keydown', e => {
 });
 
 // ===== INIT =====
+const params = new URLSearchParams(window.location.search);
+const catParam = params.get('cat');
+if (catParam) currentFilter = catParam;
 loadImages();
 </script>
 </body>

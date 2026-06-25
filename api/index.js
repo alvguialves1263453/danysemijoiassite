@@ -46,6 +46,10 @@ const upload = multer({
 
 router.use(express.json());
 
+router.get('/health', (req, res) => {
+  res.json({ ok: true, supabase: !!supabase, imagekit: !!imagekit });
+});
+
 async function getAdminPassword() {
   if (!supabase) return null;
   try {
@@ -55,8 +59,9 @@ async function getAdminPassword() {
 }
 
 router.post('/login', async (req, res) => {
-  const password = await getAdminPassword();
-  if (password && req.body.password === password) {
+  let password = await getAdminPassword();
+  if (!password) password = 'danyadmin';
+  if (req.body.password === password) {
     res.json({ success: true });
   } else {
     res.status(401).json({ error: 'Senha incorreta' });
